@@ -6,10 +6,8 @@ const PNG_SIGNATURE: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
 fn main() {
     let file = String::from("test.png");
-    let mut pointer: u32 = 0;
-    // TODO: moving pointer
-    let sig = read_bytes_or_panic(&file, pointer, 8);
-    pointer = pointer + 8;
+    let mut cursor: u32 = 0;
+    let sig = read_bytes_or_panic(&file, &mut cursor, 8);
     println!("Signature: ");
     print_bytes(&sig);
     assert!(
@@ -18,8 +16,7 @@ fn main() {
         file
     );
 
-    let lens = read_bytes_or_panic(&file, pointer, mem::size_of::<u32>() as u32);
-    pointer = pointer + mem::size_of::<u32>() as u32;
+    let lens = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
     println!("Length: ");
     print_bytes(&lens);
     let mut binary = String::from("");
@@ -32,8 +29,7 @@ fn main() {
     let number = convert_binary_to_decimal(String::from(binary));
     println!("Length: {}", number);
 
-    let chunk_type = read_bytes_or_panic(&file, pointer, mem::size_of::<u32>() as u32);
-    pointer = pointer + mem::size_of::<u32>() as u32;
+    let chunk_type = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
     println!("Chunk type: ");
     print_bytes(&chunk_type);
     println!("Chunk type: {:#?}", str::from_utf8(&chunk_type).unwrap());
@@ -85,10 +81,15 @@ fn reverse_binary(input: &String) -> String {
     return result;
 }
 
-fn read_bytes_or_panic(file_name: &String, start: u32, internal: u32) -> Vec<u8> {
+fn read_bytes_or_panic(file_name: &String, start: &mut u32, internal: u32) -> Vec<u8> {
     let file = fs::read(file_name);
+    let s = *start as usize;
+    let e = (*start + internal) as usize;
+    // moving cursor
+    *start = *start + internal;
+
     if let Ok(content) = file {
-        return content[start as usize..(start + internal) as usize].to_vec();
+        return content[s..e].to_vec();
     } else {
         panic!("Can not open the png file: {}", file_name);
     }
