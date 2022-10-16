@@ -16,23 +16,24 @@ fn main() {
         file
     );
 
-    let lens = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-    println!("Length: ");
-    print_bytes(&lens);
+    let length = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
     let mut binary = String::from("");
-    for i in lens {
+    for i in length {
         let bin = convert_decimal_to_binary(i);
         let rev_bin = reverse_binary(&bin);
         binary.push_str(&rev_bin);
     }
 
-    let number = convert_binary_to_decimal(String::from(binary));
-    println!("Length: {}", number);
+    let size = convert_binary_to_decimal(String::from(binary));
+    println!("Chunk size: {}", size);
 
     let chunk_type = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-    println!("Chunk type: ");
-    print_bytes(&chunk_type);
     println!("Chunk type: {:#?}", str::from_utf8(&chunk_type).unwrap());
+
+    // NOTE: skip chunk_data
+    cursor = cursor + size;
+    let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
+    println!("Chunk crc: {:#08X?}", chunk_crc);
 }
 
 fn print_bytes(array: &[u8]) {
