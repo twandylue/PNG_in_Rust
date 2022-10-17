@@ -16,24 +16,26 @@ fn main() {
         file
     );
 
-    let length = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-    let mut binary = String::from("");
-    for i in length {
-        let bin = convert_decimal_to_binary(i);
-        let rev_bin = reverse_binary(&bin);
-        binary.push_str(&rev_bin);
+    loop {
+        let length = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
+        let mut binary = String::from("");
+        for i in length {
+            let bin = convert_decimal_to_binary(i);
+            binary.push_str(&bin);
+        }
+
+        let size = convert_binary_to_decimal(String::from(binary));
+        println!("Chunk size: {}", size);
+
+        let chunk_type = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
+        println!("Chunk type: {:#?}", str::from_utf8(&chunk_type).unwrap());
+
+        // NOTE: skip chunk_data
+        cursor = cursor + size;
+        let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
+        println!("Chunk crc: {:#08X?}", chunk_crc);
+        println!("---------------");
     }
-
-    let size = convert_binary_to_decimal(String::from(binary));
-    println!("Chunk size: {}", size);
-
-    let chunk_type = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-    println!("Chunk type: {:#?}", str::from_utf8(&chunk_type).unwrap());
-
-    // NOTE: skip chunk_data
-    cursor = cursor + size;
-    let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-    println!("Chunk crc: {:#08X?}", chunk_crc);
 }
 
 fn print_bytes(array: &[u8]) {
@@ -47,17 +49,26 @@ fn convert_decimal_to_binary(mut input: u8) -> String {
     if input == 0 {
         return String::from("0000");
     }
-    let mut output = String::from("");
+    let mut tem_binary = String::from("");
 
     while input > 0 {
         if input % 2 == 1 {
-            output.push('1');
+            tem_binary.push('1');
         } else {
-            output.push('0');
+            tem_binary.push('0');
         }
         input = input / 2;
     }
-    return output;
+
+    // fill up to 4 binary
+    while tem_binary.len() as u32 % 4 != 0 {
+        tem_binary.push('0');
+    }
+
+    // reverse
+    let result: String = tem_binary.chars().rev().collect();
+
+    return result;
 }
 
 fn convert_binary_to_decimal(input: String) -> u32 {
@@ -77,11 +88,6 @@ fn convert_binary_to_decimal(input: String) -> u32 {
     return ans;
 }
 
-fn reverse_binary(input: &String) -> String {
-    let result: String = input.chars().rev().collect();
-    return result;
-}
-
 fn read_bytes_or_panic(file_name: &String, start: &mut u32, internal: u32) -> Vec<u8> {
     let file = fs::read(file_name);
     let s = *start as usize;
@@ -90,6 +96,9 @@ fn read_bytes_or_panic(file_name: &String, start: &mut u32, internal: u32) -> Ve
     *start = *start + internal;
 
     if let Ok(content) = file {
+        if *start > content.len() as u32 {
+            panic!("Read to the end of the png file.")
+        }
         return content[s..e].to_vec();
     } else {
         panic!("Can not open the png file: {}", file_name);
