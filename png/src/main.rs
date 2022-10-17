@@ -33,6 +33,7 @@ fn main() {
         // NOTE: skip chunk_data
         cursor = cursor + size;
         let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
+        // TODO: how to convert binary to hex?
         println!("Chunk crc: {:#08X?}", chunk_crc);
         println!("---------------");
     }
