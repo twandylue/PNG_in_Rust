@@ -73,11 +73,10 @@ fn convert_decimal_to_binary(mut input: u8) -> String {
 }
 
 fn convert_binary_to_decimal(input: String) -> u32 {
-    let mut i: u32 = 0;
     let base: u32 = 2;
+    let mut i: u32 = 0;
     let mut ans: u32 = 0;
-    let t: String = input.chars().rev().collect();
-    for n in t.chars() {
+    for n in input.chars().rev() {
         let number = n.to_digit(10);
         if let Some(num) = number {
             ans = ans + num * base.pow(i);
