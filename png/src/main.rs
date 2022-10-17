@@ -54,19 +54,20 @@ fn convert_decimal_to_binary(mut input: u8) -> String {
 
     while input > 0 {
         if input % 2 == 1 {
-            result.insert_str(0, "1");
+            result.push('1');
         } else {
-            result.insert_str(0, "0");
+            result.push('0');
         }
         input = input / 2;
     }
 
     // fill up to 8-bit binary
     while result.len() as u32 % 8 != 0 {
-        result.insert_str(0, "0");
+        result.push('0');
     }
 
-    return result;
+    // reverse
+    return result.chars().rev().collect();
 }
 
 fn convert_binary_to_decimal(input: String) -> u32 {
