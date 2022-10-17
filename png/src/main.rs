@@ -48,39 +48,39 @@ fn print_bytes(array: &[u8]) {
 
 fn convert_decimal_to_binary(mut input: u8) -> String {
     if input == 0 {
-        return String::from("0000");
+        return String::from("00000000");
     }
-    let mut tem_binary = String::from("");
+    let mut result = String::from("");
 
     while input > 0 {
         if input % 2 == 1 {
-            tem_binary.push('1');
+            result.insert_str(0, "1");
         } else {
-            tem_binary.push('0');
+            result.insert_str(0, "0");
         }
         input = input / 2;
     }
 
-    // fill up to 4 binary
-    while tem_binary.len() as u32 % 4 != 0 {
-        tem_binary.push('0');
+    // fill up to 8-bit binary
+    while result.len() as u32 % 8 != 0 {
+        result.insert_str(0, "0");
     }
-
-    // reverse
-    let result: String = tem_binary.chars().rev().collect();
 
     return result;
 }
 
 fn convert_binary_to_decimal(input: String) -> u32 {
     let base: u32 = 2;
-    let mut i: u32 = 0;
+    let mut i: u32 = input.len() as u32 - 1;
     let mut ans: u32 = 0;
-    for n in input.chars().rev() {
+    for n in input.chars() {
         let number = n.to_digit(10);
         if let Some(num) = number {
             ans = ans + num * base.pow(i);
-            i = i + 1;
+            if i == 0 {
+                break;
+            }
+            i = i - 1;
         } else {
             panic!("Wrong format of the binary.")
         }
