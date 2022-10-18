@@ -35,12 +35,12 @@ fn main() {
             convert_to_hex(&chunk_type)
         );
 
-        // NOTE: skip chunk_data
+        // WARN: skip chunk_data
         cursor = cursor + size;
         let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
         println!("Chunk crc: 0x{}", convert_to_hex(&chunk_crc));
 
-        if format!("0x{}", convert_to_hex(&chunk_type)) == "0x444E4549" {
+        if format!("0x{}", convert_to_hex(&chunk_type)) == "0x49454E44" {
             pause = true;
         }
         println!("---------------");
@@ -50,8 +50,7 @@ fn main() {
 
 fn convert_to_hex(v: &Vec<u8>) -> String {
     let mut result = String::from("");
-    // TODO: Why does it need to be reverse?
-    for c in v.iter().rev() {
+    for c in v {
         result.push_str(&format!("{:X?}", c))
     }
 
