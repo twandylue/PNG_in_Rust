@@ -16,7 +16,8 @@ fn main() {
         file
     );
 
-    loop {
+    let mut pause = false;
+    while !pause {
         let length = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
         let mut binary = String::from("");
         for i in length {
@@ -28,15 +29,33 @@ fn main() {
         println!("Chunk size: {}", size);
 
         let chunk_type = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-        println!("Chunk type: {:#?}", str::from_utf8(&chunk_type).unwrap());
+        println!(
+            "Chunk type: {:#?} (0x{})",
+            str::from_utf8(&chunk_type).unwrap(),
+            convert_to_hex(&chunk_type)
+        );
 
         // NOTE: skip chunk_data
         cursor = cursor + size;
         let chunk_crc = read_bytes_or_panic(&file, &mut cursor, mem::size_of::<u32>() as u32);
-        // TODO: how to convert binary to hex?
-        println!("Chunk crc: {:#08X?}", chunk_crc);
+        println!("Chunk crc: 0x{}", convert_to_hex(&chunk_crc));
+
+        if format!("0x{}", convert_to_hex(&chunk_type)) == "0x444E4549" {
+            pause = true;
+        }
         println!("---------------");
     }
+    println!("***End***")
+}
+
+fn convert_to_hex(v: &Vec<u8>) -> String {
+    let mut result = String::from("");
+    // TODO: Why does it need to be reverse?
+    for c in v.iter().rev() {
+        result.push_str(&format!("{:X?}", c))
+    }
+
+    return result;
 }
 
 fn print_bytes(array: &[u8]) {
