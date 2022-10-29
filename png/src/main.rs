@@ -107,6 +107,12 @@ fn convert_binary_to_decimal(input: String) -> u32 {
     return ans;
 }
 
+/*
+* NOTE: some references:
+    1. https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html
+    2. https://phaiax.github.io/mdBook/rustbook/ch08-01-vectors.html
+    3. https://www.reddit.com/r/learnrust/comments/9a5mfg/why_do_i_need_to_dereference_a_string_in_order_to/
+*/
 fn read_bytes_or_panic(file_name: &String, start: &mut u32, internal: u32) -> Vec<u8> {
     let file = fs::read(file_name);
     let s = *start as usize;
