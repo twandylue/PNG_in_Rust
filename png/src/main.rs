@@ -16,6 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "ERROR: png file: {} seems not a valid png file.",
         FILE_NAME
     );
+    println!("File Name: {}", FILE_NAME);
     println!("Signature[bytes in decimal]:\n{:?}", sig);
     buffer.step(8)?;
 
