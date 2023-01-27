@@ -65,4 +65,28 @@ impl BytePacketBuffer {
         }
         Ok(&self.buf[start..start + len])
     }
+
+    /// Read four bytes, stepping four steps forward
+    pub fn read_u32(&mut self) -> Result<u32, Box<dyn std::error::Error>> {
+        let res = ((self.read()? as u32) << 24)
+            | ((self.read()? as u32) << 16)
+            | ((self.read()? as u32) << 8)
+            | ((self.read()? as u32) << 0);
+
+        return Ok(res);
+    }
+
+    /// Read eight bytes, stepping four steps forward
+    pub fn read_u64(&mut self) -> Result<u64, Box<dyn std::error::Error>> {
+        let res = ((self.read()? as u64) << 56)
+            | ((self.read()? as u64) << 48)
+            | ((self.read()? as u64) << 40)
+            | ((self.read()? as u64) << 32)
+            | ((self.read()? as u64) << 24)
+            | ((self.read()? as u64) << 16)
+            | ((self.read()? as u64) << 8)
+            | ((self.read()? as u64) << 0);
+
+        return Ok(res);
+    }
 }
