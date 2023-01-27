@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         FILE_NAME
     );
     println!("File Name: {}", FILE_NAME);
-    println!("Signature[bytes in decimal]:\n{:?}", sig);
+    println!("Signature[bytes]:\n{:?}", sig);
     buffer.step(8)?;
 
     let mut pause = false;

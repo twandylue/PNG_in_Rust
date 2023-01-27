@@ -10,7 +10,7 @@ Sample png file in this project: `./png/test.png`
 cd ./png
 $ cargo run
 File Name: test.png
-Signature[bytes in decimal]:
+Signature[bytes]:
 [137, 80, 78, 71, 13, 10, 26, 10]
 Chunk size: 13
 Chunk type: "IHDR" (0x49484452)
