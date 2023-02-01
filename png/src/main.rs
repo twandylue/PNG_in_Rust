@@ -12,8 +12,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     f.read_to_end(&mut buffer.buf)?;
 
     let mut output_f = OpenOptions::new()
-        .append(true)
+        .write(true)
         .create(true)
+        .truncate(true)
         .open(OUTPUT_FILE_NAME)
         .unwrap();
 
