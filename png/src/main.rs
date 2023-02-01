@@ -38,6 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let chunk_type = buffer.read_u32()?;
         output_f.write(&chunk_type.to_be_bytes())?;
         if format!("{chunk_type:#X}") == "0x49454E44" {
+            output_f.write(b"thIsFoRtEST")?;
             pause = true;
         }
         println!(
