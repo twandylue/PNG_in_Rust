@@ -29,5 +29,5 @@ Chunk crc: 0xAE426082
 
 ## References
 
-* [PNG spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#CRC-algorithm)
+* [PNG spec](http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html)
 * [Hiding information inside of PNG](https://www.youtube.com/watch?v=M9ZwuIv3xz8&t=2285s&ab_channel=TsodingDaily)
